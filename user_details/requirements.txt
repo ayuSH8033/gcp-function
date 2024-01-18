@@ -1,0 +1,3 @@
+functions-framework
+Flask>=2.2.2
+psycopg2
