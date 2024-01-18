@@ -24,8 +24,9 @@ pipeline {
     steps{
         sh '''
             chmod +x ./execute_function.sh
+            brew install serverless
             ./execute_function.sh
-            echo ${params.function-name}
+            echo ${function-name}
             ls
         '''
         }   
