@@ -8,7 +8,7 @@ pipeline {
 
     parameters {
         choice(
-            choices: ['execution'],
+            choices: ['execution', 'undeployment'],
             description: 'Packaging the function and uploading the same into bucket',
             name: 'action')
         choice(
@@ -31,6 +31,16 @@ pipeline {
         '''
         }   
 }
+stage('Removing-google-deploymen-manager'){
+            when {
+                expression { params.action == 'undeployment' }
+            }
+    steps{
+        sh '''
+           gcloud deployment-manager deployments delete my-first-deployment  
+        '''
+        } 
+}  
     //     stage('Plan') {
     //         when {
     //             expression { params.action == 'plan' }
