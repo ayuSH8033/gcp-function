@@ -23,10 +23,10 @@ pipeline {
             }
     steps{
         sh '''
-            export function=verify_location
-            echo $function
+            export functionnn=${function}
+            echo $functionnn
             chmod +x ./execute_function.sh
-            ./execute_function.sh $function
+            ./execute_function.sh $functionnn
             ls
         '''
         }   
