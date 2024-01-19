@@ -14,7 +14,7 @@ pipeline {
         choice(
             choices: ['verify_location','user_details'],
             description: 'Name of the cloud Function',
-            name: 'function-name')
+            name: 'function')
     }
     stages {
         stage('Zip-generation'){
@@ -23,11 +23,10 @@ pipeline {
             }
     steps{
         sh '''
-            export function-name = verify_location
-            echo $functin-name
+            export function=verify_location
+            echo $function
             chmod +x ./execute_function.sh
-            echo ${function-name}
-            ./execute_function.sh ${function-name}
+            ./execute_function.sh $function
             ls
         '''
         }   
