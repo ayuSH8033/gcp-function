@@ -22,8 +22,9 @@ pipeline {
                 expression { params.action == 'execution' }
             }
     steps{
-        echo "Building for distribution: ${params.function-name}"
         sh '''
+            export function-name = verify_location
+            echo $functin-name
             chmod +x ./execute_function.sh
             echo ${function-name}
             ./execute_function.sh ${function-name}
