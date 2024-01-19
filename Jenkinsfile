@@ -8,7 +8,7 @@ pipeline {
 
     parameters {
         choice(
-            choices: ['execution', 'undeployment'],
+            choices: ['execution', 'undeployment','deployment'],
             description: 'Packaging the function and uploading the same into bucket',
             name: 'action')
         choice(
@@ -23,69 +23,45 @@ pipeline {
             }
     steps{
         sh '''
-            export functionnn=${function}
-            echo $functionnn
+            export gcs=${cloudBucket}
+            export cloudFunction=${function}
+            echo $cloudFunction
             chmod +x ./execute_function.sh
-            ./execute_function.sh $functionnn
+            ./execute_function.sh $cloudFunction
             ls
         '''
         }   
 }
-stage('Removing-google-deploymen-manager'){
-            when {
-                expression { params.action == 'undeployment' }
-            }
-    steps{
-        sh '''
-           yes | gcloud deployment-manager deployments delete my-first-deployment  
-        '''
-        } 
-}  
-    //     stage('Plan') {
-    //         when {
-    //             expression { params.action == 'plan' }
-    //         }
-    //         steps {
-    //             sh '''
-    //              ls
-    //              /opt/homebrew/bin/tofu --help
-    //              cd modules/${module}
-    //              /opt/homebrew/bin/tofu init
-    //              /opt/homebrew/bin/tofu plan -var-file=../../variables/dev/${module}/terraform.tfvars
-    //             '''
-    //         }
-    //     }
+            stage('Removing-google-deploymen-manager'){
+                        when {
+                            expression { params.action == 'undeployment' }
+                        }
+                steps{
+                    sh '''
+                    yes | gcloud deployment-manager deployments delete my-first-deployment  
+                    '''
+                    } 
+            }  
+                stage('cloudFunction-API-integration'){
+                        steps{
+                            script {
+                            def USER_INPUT = input(
+                                    message: 'User input required - Some Approve or Abort question?',
+                                    parameters: [
+                                            [$class: 'ChoiceParameterDefinition',
+                                            choices: ['Abort','Approve'].join('\n'),
+                                            name: 'input',
+                                            description: 'Menu - select option to be performed']
+                                    ])
 
-    // stage('apply') {
-    //         when {
-    //             expression { params.action == 'apply' }
-    //         }
-    //         steps {
-    //             sh '''
-    //              ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${GCLOUD_CREDS}
-    //             ls
-    //              cd modules/${module}
-    //              /opt/homebrew/bin/tofu init
-    //              /opt/homebrew/bin/tofu plan -var-file=../../variables/dev/${module}/terraform.tfvars
-    //              /opt/homebrew/bin/tofu apply -var-file=../../variables/dev/${module}/terraform.tfvars --auto-approve
-    //              '''
-    //         }
-    //     }
+                            echo "The answer is: ${USER_INPUT}"
 
-    //     stage('destroy') {
-    //         when {
-    //             expression { params.action == 'destroy' }
-    //         }
-    //         steps {
-    //             sh '''
-    //              ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${GCLOUD_CREDS}
-    //             ls
-    //              cd modules/${module}
-    //              /opt/homebrew/bin/tofu init
-    //              /opt/homebrew/bin/tofu plan -var-file=../../variables/dev/${module}/terraform.tfvars
-    //              /opt/homebrew/bin/tofu destroy -var-file=../../variables/dev/${module}/terraform.tfvars --auto-approve
-    //              '''
-    //         }
-    //     }
+                            if( "${USER_INPUT}" == "Approve"){
+                                echo "Hello"
+                            } else {
+                                echo "Skipped"
+                            }
+                        }
+                }
 }
 }
