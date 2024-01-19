@@ -14,4 +14,4 @@ cp .serverless/*.zip ../
 cd ..
 rm -rf function_code
 gcloud storage cp *.zip gs://function-test-420  
-gcloud deployment-manager deployments create my-first-deployment --config configurable_functions.yaml                 
+gcloud deployment-manager deployments create my-first-deployment --config configurable_functions.yaml --async                
