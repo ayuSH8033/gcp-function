@@ -24,7 +24,7 @@ pipeline {
     steps{
         sh '''
             chmod +x ./execute_function.sh
-            echo ${params.function-name}
+            echo ${function-name}
             ./execute_function.sh
             ls
         '''
