@@ -24,7 +24,7 @@ provider:
   name: google
   runtime: python39
   project: ir-project-409909
-  credentials: ~/Downloads/ir-project-key.json
+  credentials: /home/ayush_chotu51/gcp-key.json
 
 functions:
   currentTime1:
