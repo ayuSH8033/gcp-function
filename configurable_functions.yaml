@@ -1,0 +1,29 @@
+---
+imports:
+  - path: configurable_functions.jinja
+resources:
+  - type: gcp-types/cloudfunctions-v2beta:projects.locations.functions
+    name: first-manager-stack
+    properties:
+      # project: infra-testing-2023
+      # deployments: dev
+      # region: us-central1
+      parent: projects/infra-testing-2023/locations/us-central1
+      function: first-function
+      buildConfig:
+        source:
+          storageSource:
+            bucket: function-test-420
+            object: function-test.zip
+        environmentVariables:
+          TEST: val1
+        entryPoint: handler
+        runtime: python312
+      serviceConfig:
+        availableMemory: 512M
+        timeoutSeconds: 90
+        secretEnvironmentVariables:
+        - key: DB_READER
+          projectId: infra-testing-2023
+          secret: db_reader
+          version: '1'
