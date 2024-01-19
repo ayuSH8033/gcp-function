@@ -10,7 +10,7 @@ pipeline {
         choice(
             choices: ['execution'],
             description: 'Packaging the function and uploading the same into bucket',
-            name: 'action')
+            name: 'action'),
         choice(
             choices: ['verify_location','user_details'],
             description: 'Name of the cloud Function',
@@ -25,7 +25,7 @@ pipeline {
         sh '''
             chmod +x ./execute_function.sh
             echo ${function-name}
-            ./execute_function.sh
+            ./execute_function.sh ${function-name}
             ls
         '''
         }   
