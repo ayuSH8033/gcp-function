@@ -37,7 +37,7 @@ stage('Removing-google-deploymen-manager'){
             }
     steps{
         sh '''
-           gcloud deployment-manager deployments delete my-first-deployment  
+           yes | gcloud deployment-manager deployments delete my-first-deployment  
         '''
         } 
 }  
