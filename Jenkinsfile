@@ -41,7 +41,18 @@ pipeline {
                     yes | gcloud deployment-manager deployments delete my-first-deployment  
                     '''
                     } 
-            }  
+                }  
+                stage('api-cloudFunction-Integration')
+                {
+                    steps{
+                         when {
+                expression { params.action == 'execution' }
+                }
+                     sh '''
+                      diff openapi2-function.yaml openapiv2.yaml --unified=0
+                      '''
+                    }
+                }
                 stage('cloudFunction-API-integration'){
                         steps{
                             script {
@@ -57,12 +68,15 @@ pipeline {
                             echo "The answer is: ${USER_INPUT}"
 
                             if( "${USER_INPUT}" == "Approve"){
-                                echo "Hello"
+                                sh '''
+                                ls
+                                '''
                             } else {
                                 echo "Skipped"
                             }
                         }
+                    }
                 }
-}
+
 }
 }
