@@ -8,7 +8,7 @@ pipeline {
 
     parameters {
         choice(
-            choices: ['execution', 'undeployment','deployment'],
+            choices: ['deployment','undeployment'],
             description: 'Packaging the function and uploading the same into bucket',
             name: 'action')
         choice(
@@ -32,7 +32,7 @@ pipeline {
         '''
         }   
 }
-            stage('Removing-google-deploymen-manager'){
+            stage('Removing-google-deployment-manager'){
                         when {
                             expression { params.action == 'undeployment' }
                         }
@@ -42,20 +42,43 @@ pipeline {
                     '''
                     } 
                 }  
-                stage('api-cloudFunction-Integration'){
+                stage('api-comparison'){
                          when {
                 expression { params.action == 'execution' }
                 }
-                     steps{
+                     steps {
                      sh '''
                       diff openapi2-function.yaml openapiv2.yaml --unified=0
                       '''
+                    //    script {
+                    //         def USER_INPUT = input(
+                    //                 message: 'User input required - Some Approve or Abort question?',
+                    //                 parameters: [
+                    //                         [$class: 'ChoiceParameterDefinition',
+                    //                         choices: ['Abort','Approve'].join('\n'),
+                    //                         name: 'input',
+                    //                         description: 'Menu - select option to be performed']
+                    //                 ])
+
+                    //         echo "The answer is: ${USER_INPUT}"
+
+                    //         if( "${USER_INPUT}" == "Approve"){
+                    //             sh '''
+                    //             ls
+                    //             '''
+                    //         } else {
+                    //             echo "Skipped"
+                    //         }
+                    //     }
                     }
                 }
                 stage('cloudFunction-API-integration'){
+                    when {
+                expression { params.action == 'execution' }
+                }
                         steps{
                             script {
-                            def USER_INPUT = input(
+                                    def USER_INPUT = input(
                                     message: 'User input required - Some Approve or Abort question?',
                                     parameters: [
                                             [$class: 'ChoiceParameterDefinition',
