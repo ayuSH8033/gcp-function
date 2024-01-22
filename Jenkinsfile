@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage('Zip-generation'){
             when {
-                expression { params.action == 'execution' }
+                expression { params.action == 'deployment' }
             }
     steps{
         sh '''
@@ -44,7 +44,7 @@ pipeline {
                 }  
                 stage('api-comparison'){
                          when {
-                expression { params.action == 'execution' }
+                expression { params.action == 'deployment' }
                 }
                      steps {
                      sh '''
@@ -75,7 +75,7 @@ pipeline {
                 }
                 stage('cloudFunction-API-integration'){
                     when {
-                expression { params.action == 'execution' }
+                expression { params.action == 'deployment' }
                 }
                         steps{
                             script {
