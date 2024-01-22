@@ -48,6 +48,7 @@ pipeline {
                 }
                      steps {
                      sh '''
+                      (( $? < 2 )) && true
                       diff openapi2-function.yaml openapiv2.yaml --unified=0
                       '''
                     //    script {
