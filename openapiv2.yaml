@@ -1,7 +1,7 @@
 # openapi2-functions.yaml
 swagger: '2.0'
 info:
-  title: function-api
+  title: API_ID optional-string
   description: Sample API on API Gateway with a Google Cloud Functions backend
   version: 1.0.0
 schemes:
@@ -14,18 +14,7 @@ paths:
       summary: Greet a user
       operationId: hello
       x-google-backend:
-        address: https://us-central1-infra-testing-2023.cloudfunctions.net/function-1
-      responses:
-        '200':
-          description: A successful response
-          schema:
-            type: string
-  /world:
-    get:
-      summary: Greet a user
-      operationId: world
-      x-google-backend:
-        address: https://us-central1-infra-testing-2023.cloudfunctions.net/function-1
+        address: https://europe-west1-infra-testing-2023.cloudfunctions.net/python-http-function
       responses:
         '200':
           description: A successful response
