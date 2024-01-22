@@ -78,7 +78,7 @@ pipeline {
                 expression { params.action == 'deployment' }
                 }
                         steps{
-                            script {
+                            sh '''
                                     def USER_INPUT = input(
                                     message: 'User input required - Some Approve or Abort question?',
                                     parameters: [
@@ -97,7 +97,7 @@ pipeline {
                             } else {
                                 echo "Skipped"
                             }
-                        }
+                        '''
                     }
                 }
 
