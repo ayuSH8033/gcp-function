@@ -42,12 +42,11 @@ pipeline {
                     '''
                     } 
                 }  
-                stage('api-cloudFunction-Integration')
-                {
-                    steps{
+                stage('api-cloudFunction-Integration'){
                          when {
                 expression { params.action == 'execution' }
                 }
+                     steps{
                      sh '''
                       diff openapi2-function.yaml openapiv2.yaml --unified=0
                       '''
