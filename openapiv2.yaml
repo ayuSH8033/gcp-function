@@ -30,5 +30,4 @@ paths:
         '200':
           description: A successful response
           schema:
-            type: string% 
-                            
+            type: string
