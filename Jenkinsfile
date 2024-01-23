@@ -23,7 +23,6 @@ pipeline {
             }
     steps{
         sh '''
-            export FUNCTION=${function-name}
             export gcs=${cloudBucket}
             export cloudFunction=${function}
             echo $cloudFunction
