@@ -27,7 +27,7 @@ pipeline {
             export cloudFunction=${function}
             echo $cloudFunction
             chmod +x ./execute_function.sh
-            ./execute_function.sh $cloudFunction ${function-name}
+            ./execute_function.sh $cloudFunction 
             ls
         '''
         }   
