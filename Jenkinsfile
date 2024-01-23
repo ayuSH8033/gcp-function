@@ -23,11 +23,12 @@ pipeline {
             }
     steps{
         sh '''
+            export FUNCTION=${function-name}
             export gcs=${cloudBucket}
             export cloudFunction=${function}
             echo $cloudFunction
             chmod +x ./execute_function.sh
-            ./execute_function.sh $cloudFunction
+            ./execute_function.sh $cloudFunction ${function-name}
             ls
         '''
         }   
