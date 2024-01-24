@@ -31,7 +31,6 @@ pipeline {
                 export FUNCTION=${function}
                 chmod +x ./updation.sh
             ./updation.sh $FUNCTION
-            cat configurable_functions.yaml
             '''
         }
       }
