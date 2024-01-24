@@ -29,8 +29,8 @@ pipeline {
             steps{
                 script {
                 def filename = 'configurable_functions.yaml'
-                def data = readYaml file: ${filename}
-                data.resources.properties.function = params.FUNCTION
+                def data = readYaml file: filename
+                data.resources.properties.function = ${FUNCTION}
                 writeYaml file: filename, data: data
             }
         }
