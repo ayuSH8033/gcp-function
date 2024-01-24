@@ -27,11 +27,13 @@ pipeline {
                 expression { params.action == 'testing' }
             }
             steps{
+                script {
                 def filename = 'configurable_functions.yaml'
                 def data = readYaml file: filename
                 data.resources.properties.function = ${params.function-name}
                 writeYaml file: filename, data: data
             }
+        }
       }
         stage('Zip-generation'){
             when {
