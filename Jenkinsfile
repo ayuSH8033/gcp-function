@@ -17,16 +17,19 @@ pipeline {
             name: 'function')
     }
     stages {
-        stage('Manipulate Yaml file') {
-         def config = readYaml file: "./configurable_functions.yaml"
-         config.metadata.name = params.function-name
-         writeYaml file: "./configurable_functions.yaml", data: config
-      }
+    //     stage('Manipulate Yaml file') {
+    //      def config = readYaml file: "./configurable_functions.yaml"
+    //      config.metadata.name = params.function-name
+    //      writeYaml file: "./configurable_functions.yaml", data: config
+    //   }
       stage('checking-name-updation-in-YAML'){
         when {
                 expression { params.action == 'testing' }
             }
             steps{
+                def config = readYaml file: "./configurable_functions.yaml"
+                config.metadata.name = params.function-name
+                writeYaml file: "./configurable_functions.yaml", data: config
                 sh '''
                 cat configurable_functions.yaml
                 '''
