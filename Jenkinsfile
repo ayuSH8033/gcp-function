@@ -30,7 +30,7 @@ pipeline {
                 script {
                 def filename = 'configurable_functions.yaml'
                 def data = readYaml file: filename
-                data.resources.properties.function = first-function
+                data.resources.properties.function = params.FUNCTION
                 writeYaml file: filename, data: data
             }
         }
