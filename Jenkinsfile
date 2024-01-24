@@ -27,12 +27,12 @@ pipeline {
                 expression { params.action == 'testing' }
             }
             steps{
-                script {
-                def filename = 'configurable_functions.yaml'
-                def data = readYaml file: filename
-                data.resources.properties.function = ${FUNCTION}
-                writeYaml file: filename, data: data
-            }
+                sh '''
+                export FUNCTION=${function}
+                chmod +x ./updation.sh
+            ./updation.sh $FUNCTION
+            cat configurable_functions.yaml
+            '''
         }
       }
         stage('Zip-generation'){
