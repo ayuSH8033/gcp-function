@@ -5,7 +5,7 @@ resources:
     name: first-manager-stack
     properties:
       parent: projects/infra-testing-2023/locations/us-central1
-      function: ${param.function-name}
+      function: ${params.function-name}
       buildConfig:
         source:
           storageSource:

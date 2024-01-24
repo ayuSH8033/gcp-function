@@ -8,7 +8,7 @@ pipeline {
 
     parameters {
         choice(
-            choices: ['deployment','undeployment'],
+            choices: ['deployment','undeployment', 'testing'],
             description: 'Packaging the function and uploading the same into bucket',
             name: 'action')
         choice(
@@ -17,6 +17,21 @@ pipeline {
             name: 'function')
     }
     stages {
+        stage('Manipulate Yaml file') {
+         def config = readYaml file: "./configurable_functions.yaml"
+         config.metadata.name = params.function-name
+         writeYaml file: "./configurable_functions.yaml", data: config
+      }
+      stage('checking-name-updation-in-YAML'){
+        when {
+                expression { params.action == 'testing' }
+            }
+            steps{
+                sh '''
+                cat configurable_functions.yaml
+                '''
+            }
+      }
         stage('Zip-generation'){
             when {
                 expression { params.action == 'deployment' }
