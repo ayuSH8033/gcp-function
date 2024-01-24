@@ -12,6 +12,8 @@ cp swagger.yaml swagger-v2.yaml
 
 #####UPDATING NEW SWAGGER WITH FUNCTION URL#######
 yq -i '.paths./*.get.x-google.backend.address = "https://us-central1-infra-testing-2023.cloudfunctions.net/python-function"' swagger-v2.yaml 
+OR
+sed 's/helloGET/'"$1"'/' swagger-v2.yaml
 
 #######CREATING REQUEST OF MERGE UPON USER INPUT#######
 diff swagger.yaml swagger-v2.yaml
