@@ -34,7 +34,7 @@ pipeline {
 }
                 stage('cloudFunction-API-integration'){
                     when {
-                expression { params.action == 'deployment' }
+                     expression { params.action == 'deployment' }
                 }
                         steps{
                             script {
@@ -49,6 +49,7 @@ pipeline {
                             echo "The option selected is: ${USER_INPUT}"
                             if( "${USER_INPUT}" == "Approve"){
                                 sh '''
+                                ls
                                 gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api  --openapi-spec=swaggerv2-updated.yaml
                                 gcloud api-gateway gateways update test --api=hello-world-api --api-config=generic-updated-v2 --location=us-central1
                                 '''
