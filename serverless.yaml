@@ -1,7 +1,7 @@
 ---
 service: python-simple-http-endpoint-test
 frameworkVersion: "3"
-environment: "GEN_2"
+
 
 package:
   exclude:
