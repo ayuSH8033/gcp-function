@@ -29,7 +29,7 @@ pipeline {
                     chmod +x ./execute_function.sh
                     ./execute_function.sh $cloudFunction 
                     ls
-                    diff swagger-v2.yaml swagger-updated-v2.yaml --unified=0
+                    diff swagger-v2.yaml swagger-updated-v2.yaml --unified=0 || true
                 '''
                 }   
 }
