@@ -49,8 +49,6 @@ pipeline {
                             echo "The option selected is: ${USER_INPUT}"
                             if( "${USER_INPUT}" == "Approve"){
                                 sh '''
-                                rm -rf swagger.yaml
-                                cp swaggerv2.yaml swagger.yaml
                                 gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api  --openapi-spec=swagger.yaml
                                 gcloud api-gateway gateways update test --api=hello-world-api --api-config=generic-updated-v2 --location=us-central1
                                 '''
