@@ -8,7 +8,7 @@ pipeline {
 
     parameters {
         choice(
-            choices: ['deployment','undeployment', 'testing'],
+            choices: ['deployment','undeployment'],
             description: 'Packaging the function and uploading the same into bucket',
             name: 'action')
         choice(
@@ -28,6 +28,7 @@ pipeline {
                     echo $cloudFunction
                     chmod +x ./execute_function.sh
                     ./execute_function.sh $cloudFunction 
+                    ls
                     diff swagger-v2.yaml swagger-updated-v2.yaml --unified=0
                 '''
                 }   
