@@ -50,6 +50,7 @@ pipeline {
                             if( "${USER_INPUT}" == "Approve"){
                                 sh '''
                                 ls
+                                cat swaggerv2-updated.yaml
                                 gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api  --openapi-spec=swaggerv2-updated.yaml
                                 gcloud api-gateway gateways update test --api=hello-world-api --api-config=generic-updated-v2 --location=us-central1
                                 '''
