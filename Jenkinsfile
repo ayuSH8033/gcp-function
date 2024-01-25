@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
     CLOUDSDK_CORE_PROJECT='infra-testing-2023'
-    CLIENT_EMAIL='infra-manager-testing-sa@infra-testing-2023.iam.gserviceaccount.com'
+    CLIENT_EMAIL=credentials('gcp-svc-Account')
     GCLOUD_CREDS=credentials('gcp-creds')
   }
 
@@ -17,11 +17,6 @@ pipeline {
             name: 'function')
     }
     stages {
-    //     stage('Manipulate Yaml file') {
-    //      def config = readYaml file: "./configurable_functions.yaml"
-    //      config.metadata.name = params.function-name
-    //      writeYaml file: "./configurable_functions.yaml", data: config
-    //   }
       stage('checking-name-updation-in-YAML'){
         when {
                 expression { params.action == 'testing' }
@@ -31,6 +26,7 @@ pipeline {
                 export FUNCTION=${function}
                 chmod +x ./updation.sh
             ./updation.sh $FUNCTION
+            gcloud functions list
             '''
         }
       }
