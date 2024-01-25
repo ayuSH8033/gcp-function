@@ -17,34 +17,48 @@ pipeline {
             name: 'function')
     }
     stages {
-      stage('checking-name-updation-in-YAML'){
-        when {
-                expression { params.action == 'testing' }
-            }
-            steps{
-                sh '''
-                export FUNCTION=${function}
-                chmod +x ./updation.sh
-            ./updation.sh $FUNCTION
-            gcloud functions list
-            '''
-        }
-      }
-        stage('Zip-generation'){
+        stage('Deploying-services'){
             when {
                 expression { params.action == 'deployment' }
             }
-    steps{
-        sh '''
-            export gcs=${cloudBucket}
-            export cloudFunction=${function}
-            echo $cloudFunction
-            chmod +x ./execute_function.sh
-            ./execute_function.sh $cloudFunction 
-            ls
-        '''
-        }   
+            steps{
+                sh '''
+                    export gcs=${cloudBucket}
+                    export cloudFunction=${function}
+                    echo $cloudFunction
+                    chmod +x ./execute_function.sh
+                    ./execute_function.sh $cloudFunction 
+                    diff swagger-v2.yaml swagger-updated-v2.yaml --unified=0
+                '''
+                }   
 }
+                stage('cloudFunction-API-integration'){
+                    when {
+                expression { params.action == 'deployment' }
+                }
+                        steps{
+                            script {
+                                    def USER_INPUT = input(
+                                    message: 'User input required - Approve or Abort the api-merge request?',
+                                    parameters: [
+                                            [$class: 'ChoiceParameterDefinition',
+                                            choices: ['Abort','Approve'].join('\n'),
+                                            name: 'input',
+                                           ]
+                                    ])
+                            echo "The option selected is: ${USER_INPUT}"
+                            if( "${USER_INPUT}" == "Approve"){
+                                sh '''
+                                yq ea '. as $item ireduce ({}; . * $item )' swagger-v2.yaml swagger-updated-v2.yaml >> final-merged-swagger.yaml
+                                gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api --final-merged-swagger.yaml
+                                gcloud api-gateway gateways update test --api=hello-worl-api --api-config=generic-updated-v2 --location=us-central1
+                                '''
+                            } else {
+                                echo "Abort option is selected,Skipping further operation"
+                            }
+                        }
+                    }
+                }
             stage('Removing-google-deployment-manager'){
                         when {
                             expression { params.action == 'undeployment' }
@@ -55,64 +69,6 @@ pipeline {
                     '''
                     } 
                 }  
-                stage('api-comparison'){
-                         when {
-                expression { params.action == 'deployment' }
-                }
-                     steps {
-                     sh '''
-                      (( $? < 2 )) && true
-                      diff openapi2-function.yaml openapiv2.yaml --unified=0 || true
-                      '''
-                    //    script {
-                    //         def USER_INPUT = input(
-                    //                 message: 'User input required - Some Approve or Abort question?',
-                    //                 parameters: [
-                    //                         [$class: 'ChoiceParameterDefinition',
-                    //                         choices: ['Abort','Approve'].join('\n'),
-                    //                         name: 'input',
-                    //                         description: 'Menu - select option to be performed']
-                    //                 ])
-
-                    //         echo "The answer is: ${USER_INPUT}"
-
-                    //         if( "${USER_INPUT}" == "Approve"){
-                    //             sh '''
-                    //             ls
-                    //             '''
-                    //         } else {
-                    //             echo "Skipped"
-                    //         }
-                    //     }
-                    }
-                }
-                stage('cloudFunction-API-integration'){
-                    when {
-                expression { params.action == 'deployment' }
-                }
-                        steps{
-                            script {
-                                    def USER_INPUT = input(
-                                    message: 'User input required - Some Approve or Abort question?',
-                                    parameters: [
-                                            [$class: 'ChoiceParameterDefinition',
-                                            choices: ['Abort','Approve'].join('\n'),
-                                            name: 'input',
-                                            description: 'Menu - select option to be performed']
-                                    ])
-
-                            echo "The answer is: ${USER_INPUT}"
-
-                            if( "${USER_INPUT}" == "Approve"){
-                                sh '''
-                                ls
-                                '''
-                            } else {
-                                echo "Skipped"
-                            }
-                        }
-                    }
-                }
 
 }
 }
