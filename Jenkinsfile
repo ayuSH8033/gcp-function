@@ -23,7 +23,6 @@ pipeline {
             }
             steps{
                 sh '''
-                    export gcs=${cloudBucket}
                     export cloudFunction=${function}
                     echo $cloudFunction
                     chmod +x ./execute_function.sh
@@ -50,8 +49,7 @@ pipeline {
                             echo "The option selected is: ${USER_INPUT}"
                             if( "${USER_INPUT}" == "Approve"){
                                 sh '''
-                                yq ea '. as $item ireduce ({}; . * $item )' swagger-v2.yaml swagger-updated-v2.yaml >> final-merged-swagger.yaml
-                                gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api --final-merged-swagger.yaml
+                                gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api --swagger-updated-v2.yaml
                                 gcloud api-gateway gateways update test --api=hello-worl-api --api-config=generic-updated-v2 --location=us-central1
                                 '''
                             } else {
