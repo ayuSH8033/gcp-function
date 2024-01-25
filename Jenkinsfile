@@ -28,7 +28,7 @@ pipeline {
                     chmod +x ./execute_function.sh
                     ./execute_function.sh $cloudFunction 
                     ls
-                    diff swagger.yaml swaggerv2.yaml --unified=0 || true
+                    diff swaggerv2.yaml swaggerv2-updated.yaml --unified=0 || true
                 '''
                 }   
 }
@@ -49,7 +49,7 @@ pipeline {
                             echo "The option selected is: ${USER_INPUT}"
                             if( "${USER_INPUT}" == "Approve"){
                                 sh '''
-                                gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api  --openapi-spec=swagger.yaml
+                                gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api  --openapi-spec=swaggerv2-updated.yaml
                                 gcloud api-gateway gateways update test --api=hello-world-api --api-config=generic-updated-v2 --location=us-central1
                                 '''
                             } else {
