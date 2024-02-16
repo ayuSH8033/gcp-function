@@ -8,7 +8,7 @@ pipeline {
         parameters{
                         choice(choices: ['deployment', 'undeployment'], description: 'Action to be performed on cloud function', name: 'action')
                         choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function') 
-                        string(defaultValue: 'gs://function-test-420', description: 'URI of GCS bucket to be used by Cloud Function and Deployment Manager', name: 'Cloud Storage')
+                        string(defaultValue: 'gs://function-test-420', description: 'URI of GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
                     }
     stages {
         stage('Deploying-services'){
@@ -18,8 +18,9 @@ pipeline {
             steps{
                 sh '''
                     export cloudFunction=${function}
-                    export gcsBucket=${Cloud Storage}
+                    export gcsBucket=${CloudStorage}
                     echo $cloudFunction
+                    echo $gcsBucket
                     chmod +x ./execute_function.sh
                     ./execute_function.sh $cloudFunction $gcsBucket
                     ls
