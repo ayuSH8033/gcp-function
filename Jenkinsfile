@@ -9,6 +9,8 @@ pipeline {
                         choice(choices: ['deployment', 'undeployment'], description: 'Action to be performed on cloud function', name: 'action')
                         choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function') 
                         string(defaultValue: 'function-test-420', description: 'GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
+                        string(defaultValue: '', description: 'Stack name for googleDeployment Manager', name: 'stackName')
+
                     }
     stages {
         stage('Deploying-services'){
@@ -20,9 +22,7 @@ pipeline {
                     export cloudFunction=${function}
                     export gcsBucket=${CloudStorage}
                     chmod +x ./execute_function.sh
-                    ./execute_function.sh $cloudFunction $gcsBucket
-                    export stack=${action}
-                    gcloud deployment-manager deployments create ${stack} --config cloud-function.yaml  --async                
+                    ./execute_function.sh $cloudFunction $gcsBucket              
                 '''
                 }   
 }
