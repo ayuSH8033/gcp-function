@@ -2,7 +2,7 @@ imports:
   - path: configurable_functions.jinja
 resources:
   - type: gcp-types/cloudfunctions-v2beta:projects.locations.functions
-    name: $stack
+    name: $stack-stack
     properties:
       parent: projects/infra-testing-2023/locations/us-central1
       function: $gcpfunction
