@@ -8,7 +8,7 @@ pipeline {
         parameters{
                         choice(choices: ['deployment', 'undeployment'], description: 'Action to be performed on cloud function', name: 'action')
                         choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function') 
-                        string(defaultValue: 'gs://function-test-420', description: 'URI of GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
+                        string(defaultValue: 'function-test-420', description: 'URI of GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
                     }
     stages {
         stage('Deploying-services'){
@@ -19,16 +19,8 @@ pipeline {
                 sh '''
                     export cloudFunction=${function}
                     export gcsBucket=${CloudStorage}
-                    echo $cloudFunction
-                    echo $gcsBucket
-                    export stack=${function}
-                    export gcpfunction=${function}
-                    export gcsBucket=${CloudStorage}
-                    envsubst < configurable_functions.yaml 
                     chmod +x ./execute_function.sh
                     ./execute_function.sh $cloudFunction $gcsBucket
-                    ls
-                    diff swaggerv2.yaml swagger.yaml --unified=0 || true
                 '''
                 }   
 }
@@ -37,6 +29,10 @@ pipeline {
                      expression { params.action == 'deployment' }
                 }
                         steps{
+                            sh '''
+                                chmod +x ./api_execution.sh
+                                ./api_execution.sh
+                            '''
                             script {
                                     def USER_INPUT = input(
                                     message: 'User input required - Approve or Abort the api-merge request?',
