@@ -19,4 +19,4 @@ export gcsBucket=${CloudStorage}
 envsubst < configurable_functions.yaml > cloud-function.yaml
 cat cloud-function.yaml
 gcloud storage cp *.zip gs://$2  
-gcloud deployment-manager deployments create cloud-function-stack --config cloud-function.yaml  --async                
+gcloud deployment-manager deployments create my-first-deployment --config cloud-function.yaml  --async                
