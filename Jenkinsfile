@@ -8,7 +8,7 @@ pipeline {
         parameters{
                         choice(choices: ['deployment', 'undeployment'], description: 'Action to be performed on cloud function', name: 'action')
                         choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function') 
-                        string(defaultValue: 'function-test-420', description: 'URI of GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
+                        string(defaultValue: 'function-test-420', description: 'GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
                     }
     stages {
         stage('Deploying-services'){
