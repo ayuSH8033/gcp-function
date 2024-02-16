@@ -10,7 +10,8 @@ pipeline {
                         choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function') 
                         string(defaultValue: 'function-test-420', description: 'GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
                         string(defaultValue: '', description: 'Stack name for googleDeployment Manager', name: 'stackName')
-
+                        string(defaultValue: 'hello-world-api', description: 'API for configuring with Cloud Function', name: 'ApiGateway')
+                        string(defaultValue: '', description: 'API config', name: 'Config')
                     }
     stages {
         stage('Deploying-services'){
@@ -32,7 +33,7 @@ pipeline {
                 }
                         steps{
                             sh '''
-                                chmod +x ./api_execution.sh
+                                chmod +x ./api_execution.sh $api 
                                 ./api_execution.sh
                             '''
                             script {
