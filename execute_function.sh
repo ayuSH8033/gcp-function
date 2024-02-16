@@ -14,10 +14,10 @@ cd ..
 rm -rf function_code
 echo The name of the cloud-storage bucket is $2
 export stack=${function}
-echo $stack
 export gcpfunction=${function}
 export gcsBucket=${CloudStorage}
 envsubst < configurable_functions.yaml > cloud-function.yaml
 cat cloud-function.yaml
 gcloud storage cp *.zip gs://$2  
+echo $stack
 gcloud deployment-manager deployments create ${stack} --config cloud-function.yaml  --async                
