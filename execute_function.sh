@@ -14,6 +14,7 @@ cd ..
 rm -rf function_code
 echo The name of the cloud-storage bucket is $2
 export stack=${function}
+echo $stack
 export gcpfunction=${function}
 export gcsBucket=${CloudStorage}
 envsubst < configurable_functions.yaml > cloud-function.yaml
