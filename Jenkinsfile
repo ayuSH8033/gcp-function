@@ -21,9 +21,9 @@ pipeline {
                     export gcsBucket=${CloudStorage}
                     echo $cloudFunction
                     echo $gcsBucket
-                    export $stack=${function}
-                    export $gcpfunction=${function}
-                    export $gcsBucket=${CloudStorage}
+                    export stack=${function}
+                    export gcpfunction=${function}
+                    export gcsBucket=${CloudStorage}
                     envsubst < configurable_functions.yaml 
                     cat configurable_functions.yaml
                     chmod +x ./execute_function.sh
