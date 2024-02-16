@@ -63,7 +63,8 @@ pipeline {
                         }
                 steps{
                     sh '''
-                    yes | gcloud deployment-manager deployments delete my-first-deployment  
+                    export stack=${stackName}
+                    yes | gcloud deployment-manager deployments delete ${stack}  
                     '''
                     } 
                 }  
