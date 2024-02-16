@@ -21,7 +21,7 @@ pipeline {
                     export gcsBucket=${CloudStorage}
                     chmod +x ./execute_function.sh
                     ./execute_function.sh $cloudFunction $gcsBucket
-                    export stack=${function}
+                    export stack=${action}
                     gcloud deployment-manager deployments create ${stack} --config cloud-function.yaml  --async                
                 '''
                 }   
