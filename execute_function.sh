@@ -20,4 +20,4 @@ envsubst < configurable_functions.yaml > cloud-function.yaml
 cat cloud-function.yaml
 gcloud storage cp *.zip gs://$2  
 echo $stack
-gcloud deployment-manager deployments create $stack --config cloud-function.yaml  --async                
+# gcloud deployment-manager deployments create $stack --config cloud-function.yaml  --async                
