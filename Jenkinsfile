@@ -5,23 +5,11 @@ pipeline {
     CLIENT_EMAIL=credentials('gcp-svc-Account')
     GCLOUD_CREDS=credentials('gcp-creds')
   }
-  parameters{choice(choices: ['deployment', 'undeployment'], description: 'Action to be performed on cloud function', name: 'action')
-                         choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function') 
-                         string(defaultValue: 'gs://function-test-420', description: 'URI of GCS bucket to be used by Cloud Function and Deployment Manager', name: 'Cloud Storage')
-  }
-         
-
-    // parameters {
-    //     choice(
-    //         choices: ['deployment','undeployment'],
-    //         description: 'Packaging the function and uploading the same into bucket',
-    //         name: 'action')
-    //     choice(
-    //         choices: ['verify_location','user_details'],
-    //         description: 'Name of the cloud Function',
-    //         name: 'function')
-    //     ([string(defaultValue: 'gs://function-test-420', description: 'URI of GCS bucket to be used by Cloud Function and Deployment Manager', name: 'Cloud Storage')])
-    // }
+        parameters{
+                        choice(choices: ['deployment', 'undeployment'], description: 'Action to be performed on cloud function', name: 'action')
+                        choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function') 
+                        string(defaultValue: 'gs://function-test-420', description: 'URI of GCS bucket to be used by Cloud Function and Deployment Manager', name: 'Cloud Storage')
+                    }
     stages {
         stage('Deploying-services'){
             when {
@@ -30,9 +18,10 @@ pipeline {
             steps{
                 sh '''
                     export cloudFunction=${function}
+                    export gcsBucket=${Cloud Storage}
                     echo $cloudFunction
                     chmod +x ./execute_function.sh
-                    ./execute_function.sh $cloudFunction 
+                    ./execute_function.sh $cloudFunction $gcsBucket
                     ls
                     diff swaggerv2.yaml swagger.yaml --unified=0 || true
                 '''

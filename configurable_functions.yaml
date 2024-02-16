@@ -2,14 +2,14 @@ imports:
   - path: configurable_functions.jinja
 resources:
   - type: gcp-types/cloudfunctions-v2beta:projects.locations.functions
-    name: first-manager-stack
+    name: $stack
     properties:
       parent: projects/infra-testing-2023/locations/us-central1
-      function: first-function
+      function: $gcpfunction
       buildConfig:
         source:
           storageSource:
-            bucket: function-test-420
+            bucket: $gcsBucket
             object: function-test.zip
         environmentVariables:
           TEST: val1
