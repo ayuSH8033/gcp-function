@@ -1,4 +1,3 @@
----
 service: $gcpfunction
 frameworkVersion: "3"
 
