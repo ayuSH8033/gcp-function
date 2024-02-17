@@ -1,4 +1,4 @@
-service: $gcpfunction
+service: python-simple-http-endpoint
 frameworkVersion: "3"
 
 
