@@ -2,8 +2,10 @@
 
 echo The name of the function is $1
 mkdir function_code
+export gcpfunction=${function}
+envsubst < serverless.yaml > serverlessv2.yaml
 cp -r $1 utils function_code
-cp serverless.yaml swagger.yaml main.py function_code
+cp serverlessv2.yaml swagger.yaml main.py function_code
 cp $1/requirements.txt function_code
 cd function_code
 sls plugin install -n serverless-python-requirements

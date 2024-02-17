@@ -1,5 +1,5 @@
 ---
-service: python-simple-http-endpoint-test
+service: $gcpfunction
 frameworkVersion: "3"
 
 
