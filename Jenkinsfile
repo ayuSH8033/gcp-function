@@ -22,6 +22,9 @@ pipeline {
                 sh '''
                     export cloudFunction=${function}
                     export gcsBucket=${CloudStorage}
+                    export FUNCTION_NAME=$(echo "$1" | tr '_' '-')
+                    echo "{\"function-name\":\"$FUNCTION_NAME\"}">> function-name.json
+                    cat serverless.yaml
                     chmod +x ./execute_function.sh
                     ./execute_function.sh $cloudFunction $gcsBucket              
                 '''

@@ -3,9 +3,9 @@
 echo The name of the function is $1
 mkdir function_code
 ############UPDATING-FUNCTION-NAME################
-export FUNCTION_NAME=$(echo "$1" | tr '_' '-')
-echo "{\"function-name\":\"$FUNCTION_NAME\"}">> function-name.json
-cat serverless.yaml
+# export FUNCTION_NAME=$(echo "$1" | tr '_' '-')
+# echo "{\"function-name\":\"$FUNCTION_NAME\"}">> function-name.json
+# cat serverless.yaml
 ##################################################
 cp -r $1 utils function_code
 cp serverless.yaml swagger.yaml main.py function_code
