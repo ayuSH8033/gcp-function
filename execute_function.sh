@@ -2,8 +2,11 @@
 
 echo The name of the function is $1
 mkdir function_code
-chmod +x serverless-modification.sh
-./serverless-modification.sh
+############UPDATING-FUNCTION-NAME################
+export FUNCTION_NAME=$(echo "$1" | tr '_' '-')
+echo "{\"function-name\":\"$FUNCTION_NAME\"}">> function-name.json
+cat serverless.yaml
+##################################################
 cp -r $1 utils function_code
 cp serverless.yaml swagger.yaml main.py function_code
 cp $1/requirements.txt function_code
