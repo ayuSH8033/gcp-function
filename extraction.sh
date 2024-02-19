@@ -27,3 +27,15 @@ gcloud api-gateway api-configs create ${CONFIG-NAME} --api=hello-world-api --fin
 
 ######CREATE NEW CONFIG INTEGRATED WITH GATEWAY########
 gcloud api-gateway gateways update ${GATEWAY-ID} --api=hello-worl-api --api-config=${CONFIG-NAME} --location=us-central1
+
+##########RENAMEING THE SERVICE IN SERVERLESS YAML##########
+export FUNCTION_NAME=$(echo "${cloudFunction}" | tr '_' '-')
+sed 's/python-simple-http-endpoint/'"$FUNCTION_NAME"'/' serverless.yaml > new.yaml
+mv new.yaml serverless.yaml
+
+#######RENAMING CURRENT API CONFIG FROM latest TO v2 AND CREATE NEW CONFIG WITH NAME latest USING YAML PROVIDED DURING FUNCTION BUILD#################
+gcloud api-gateway api-configs update <$CURRENT-CONFIG> --api=first-api-new --display-name="v2"
+gcloud api-gateway api-configs create <$latest> --api=hello-world-api  --openapi-spec=swagger.yaml
+
+#######DEPLOY API GATEWAY WITH UPDATED CONFIG###########
+gcloud api-gateway gateways update test --api=hello-world-api --api-config=generic-updated-v2 --location=us-central1 
