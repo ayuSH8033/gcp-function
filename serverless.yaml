@@ -1,4 +1,4 @@
-service: python-simple-http-endpoint
+service: ${file(./function-name.json):function-name}
 frameworkVersion: "3"
 
 
