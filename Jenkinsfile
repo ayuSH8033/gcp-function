@@ -22,7 +22,8 @@ pipeline {
                 sh '''
                     export cloudFunction=${function}
                     export gcsBucket=${CloudStorage}
-                    sed 's/python-simple-http-endpoint/'"$cloudFunction"'/' serverless.yaml > new.yaml
+                    export FUNCTION_NAME=$(echo "$cloudFunction" | tr '_' '-')
+                    sed 's/python-simple-http-endpoint/'"$FUNCTION_NAME"'/' serverless.yaml > new.yaml
                     mv new.yaml serverless.yaml
                     cat serverless.yaml
                     chmod +x ./execute_function.sh
