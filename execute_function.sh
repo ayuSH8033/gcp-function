@@ -16,7 +16,7 @@ cp .serverless/*.zip ../
 cd ..
 rm -rf function_code
 echo The name of the cloud-storage bucket is $2
-export stack=$1
+export stack=$FUNCTION_NAME
 export gcpfunction=$1
 export gcsBucket=$2
 envsubst < configurable_functions.yaml > cloud-function.yaml
