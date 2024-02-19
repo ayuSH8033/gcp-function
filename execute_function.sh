@@ -2,9 +2,8 @@
 
 echo The name of the function is $1
 mkdir function_code
-# export gcpfunction=${function}
-# envsubst < serverless.yaml > serverless.yaml
-cat serverless.yaml
+chmod +x serverless-modification.sh
+./serverless-modification.sh
 cp -r $1 utils function_code
 cp serverless.yaml swagger.yaml main.py function_code
 cp $1/requirements.txt function_code
