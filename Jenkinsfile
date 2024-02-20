@@ -9,9 +9,9 @@ pipeline {
         choice(choices: ['deployment', 'undeployment'], description: 'Action to be performed on cloud function', name: 'action')
         choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function')
         string(defaultValue: 'function-test-420', description: 'GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
-        string(defaultValue: '', description: 'Stack name for googleDeployment Manager', name: 'stackName')
+        string(defaultValue: '', description: 'Name of the current config', name: 'CurrentConfig')
         string(defaultValue: 'hello-world-api', description: 'API for configuring with Cloud Function', name: 'ApiGateway')
-        string(defaultValue: '', description: 'API config', name: 'Config')
+        string(defaultValue: '', description: 'Updated API config', name: 'UpdatedConfig')
     }
     stages {
         stage('Deploying-services') {
@@ -52,9 +52,9 @@ pipeline {
                     echo "The option selected is: ${USER_INPUT}"
                     if( "${USER_INPUT}" == "Approve") {
                         sh '''
-                        gcloud api-gateway api-configs update generic-config --api=first-api-new --display-name="latest-config"
-                        gcloud api-gateway api-configs create generic-updated-v2 --api=hello-world-api  --openapi-spec=swagger.yaml
-                        gcloud api-gateway gateways update test --api=hello-world-api --api-config=generic-updated-v2 --location=us-central1
+                        gcloud api-gateway api-configs update generic-updated-v2 --api=first-api-new --display-name="generic-config"
+                        gcloud api-gateway api-configs create latest-config --api=hello-world-api  --openapi-spec=swagger.yaml
+                        gcloud api-gateway gateways update test --api=hello-world-api --api-config=latest-config --location=us-central1
                         '''
                     } else
                     {
