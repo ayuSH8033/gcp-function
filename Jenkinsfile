@@ -9,9 +9,6 @@ pipeline {
         choice(choices: ['deployment', 'undeployment'], description: 'Action to be performed on cloud function', name: 'action')
         choice(choices: ['verify_location', 'user_details'], description: 'Name of the cloud Function', name: 'function')
         string(defaultValue: 'function-test-420', description: 'GCS bucket to be used by Cloud Function and Deployment Manager', name: 'CloudStorage')
-        string(defaultValue: '', description: 'Name of the current config', name: 'CurrentConfig')
-        string(defaultValue: 'hello-world-api', description: 'API for configuring with Cloud Function', name: 'ApiGateway')
-        string(defaultValue: '', description: 'Updated API config', name: 'UpdatedConfig')
     }
     stages {
         stage('Deploying-services') {
@@ -22,10 +19,6 @@ pipeline {
                 sh '''
                 export cloudFunction=${function}
                 export gcsBucket=${CloudStorage}
-                export FUNCTION_NAME=$(echo "$cloudFunction" | tr '_' '-')
-                sed 's/python-simple-http-endpoint/'"$FUNCTION_NAME"'/' serverless.yaml > new.yaml
-                mv new.yaml serverless.yaml
-                cat serverless.yaml
                 chmod +x ./execute_function.sh
                 ./execute_function.sh $cloudFunction $gcsBucket
                 '''
