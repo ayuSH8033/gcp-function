@@ -52,7 +52,7 @@ pipeline {
                     echo "The option selected is: ${USER_INPUT}"
                     if( "${USER_INPUT}" == "Approve") {
                         sh '''
-                        gcloud api-gateway api-configs update generic-updated-v2 --api=first-api-new --display-name="generic-config"
+                        gcloud api-gateway api-configs update generic-updated-v2 --api=hello-world-api --display-name="generic-config"
                         gcloud api-gateway api-configs create latest-config --api=hello-world-api  --openapi-spec=swagger.yaml
                         gcloud api-gateway gateways update test --api=hello-world-api --api-config=latest-config --location=us-central1
                         '''
