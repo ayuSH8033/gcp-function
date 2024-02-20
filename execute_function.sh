@@ -12,7 +12,7 @@ cd function_code
 sls plugin install -n serverless-python-requirements
 sls plugin install -n serverless-google-cloudfunctions
 sls package --verbose
-cp .serverless/*.zip ../
+cp .serverless/$FUNCTION_NAME.zip ../
 cd ..
 rm -rf function_code
 echo The name of the cloud-storage bucket is $2
