@@ -69,8 +69,8 @@ pipeline {
             }
             steps {
                 sh '''
-                export stack=${function}
-                yes | gcloud deployment-manager deployments delete ${stack}
+                export FUNCTION_NAME=$(echo "${function}" | tr '_' '-')
+                yes | gcloud deployment-manager deployments delete ${FUNCTION_NAME}
                 '''
             }
         }
