@@ -1,32 +1,86 @@
 name: GCP
 on:
   workflow_dispatch:
+    inputs:
+      APP_VERSION:
+        required: false
+        description: app version
+env:
+  ANSIBLE_USER: "${{ secrets.GITHUB_ACCESS_KEY_ANSIBLE_USER }}"
+  ANSIBLE_SSH_PASS: "${{ secrets.GITHUB_ACCESS_KEY_ANSIBLE_SSH_PASS }}"
+  SENTRY_AUTH_TOKEN: "${{ secrets.GCP_SVC_ACCOUNT_SENTRY_AUTH_TOKEN }}"
 jobs:
   build:
     runs-on:
       - ubuntu-latest
     steps:
+    - name: clean workspace
+      shell: bash
+      run: rm -rf ${{ github.workspace }}/*
     - name: checkout
       uses: actions/checkout@v4.1.0
     - name: run command
       shell: bash
       run: |-
-        rm -rf function_code
-        echo The name of the cloud-function is verify_location
-        export FUNCTION_NAME=$(echo "verify_location" | tr '_' '-')
-        sed 's/python-simple-http-endpoint/'"$FUNCTION_NAME"'/' serverless.yaml > cloudfunction.yaml
-        mv cloudfunction.yaml serverless.yaml
-        mkdir function_code
-        cp -r verify_location utils function_code
-        cp serverless.yaml swagger.yaml main.py function_code
-        cp verify_location/requirements.txt function_code
-        cd function_code
-        sls plugin install -n serverless-python-requirements
-        sls plugin install -n serverless-google-cloudfunctions
-        sls package --verbose
-        cp .serverless/$FUNCTION_NAME.zip ../
-        ls -la ../
-        cd ..
-        rm -rf function_code
-        ls -la
-        gcloud storage cp *.zip gs://function-test-420
+        #!/bin/bash -x
+        #Get creds for ansible vault
+        user_creds=$(curl -s -H "APIKey: 9da586fb3427ee34f68bc35a7d5c" https://secrets.bhadwa-420.net/api/passwords/198)
+        vaultpass=$(echo $user_creds | jq -r '.[]["Password"]');
+        echo "*******Getting NPM creds from secrets*******"
+        #Get creds for npm user
+        npm_creds=$(curl -s -H "APIKey: 2c63a897b3e5429f5be433dc8a6c8" https://secrets.bhadwa-420.net/api/passwords/1151)
+        npm_user=$(echo $npm_creds | jq -r '.[]["UserName"]');
+        npm_pwd=$(echo $npm_creds | jq -r '.[]["Password"]');
+        echo "*******Getting JWT Tokens from secrets*******"
+        #Get creds for jwt
+        jwt_creds=$(curl -s -H "APIKey: 3ac2b834fe7df27568acdbe4393b3" https://secrets.bhadwa-420.net/api/passwords/1214)
+        jwt_secret=$(echo $jwt_creds | jq -r '.[]["Password"]');
+        #Get creds for bf_jwt_secret
+        bf_jwt_creds=$(curl -s -H "APIKey: fd8762ea53cb8ad69e5c37f432b9f" https://secrets.bhadwa-420.net/api/passwords/1187)
+        bf_jwt_secret=$(echo $bf_jwt_creds | jq -r '.[]["Password"]');
+        echo "*******Getting Redis password from secrets*******"
+        redis_creds=$(curl -s -H "APIKey: 86437eb23fcd5a9e684cf35db3a729e4" https://secrets.bhadwa-420.net/api/passwords/1202)
+        redis_password=$(echo $redis_creds | jq -r '.[]["Password"]');
+        echo "*******Getting DUX tokens from secrets*******"
+        dux_admin_token_json=$(curl -s -H "APIKey: 8d6ebf9235a3c473adc68be45972f84" https://secrets.bhadwa-420.net/api/passwords/6048)
+        dux_admin_token=$(echo $dux_admin_token_json | jq -r '.[]["Password"]');
+        dux_token_json=$(curl -s -H "APIKey: 8d6ebf9235a733adc68be45972f84" https://secrets.bhadwa-420.net/api/passwords/6047)
+        dux_token=$(echo $dux_token_json | jq -r '.[]["Password"]');
+        #Change dir to ansible workspace
+        cd tfg-ansible
+        #Get vault pass needed to decrypt ansible vault
+        echo $vaultpass > .vault_pass
+        echo "************Running ansible playbook************";
+        web_servers="yolov-server"
+        echo $APP_VERSION
+        echo "----------"
+        echo $web_servers
+        echo "----------"
+        #Run playbook
+        ansible-playbook -i ./inventories/inventory.ini ./playbooks/tier1-code-push-bhadwa-os.yml --vault-password-file=.vault_pass --limit "$web_servers" \
+        -e "appName=tier1-bhadwa-os" \
+        -e "app_version=${{ env.APP_VERSION }}" \
+        -e "npm_user=${{ env.npm_user }}" \
+        -e "npm_pwd=${{ env.npm_pwd }}" \
+        -e "sentry_release=${{ env.APP_VERSION }}" \
+        -e "sentry_org=bhadwa-osrands" \
+        -e "sentry_project=bhadwa-os-tier-1" \
+        -e "sentry_dns=https://e1a0af792d214da4a7ac2dfcc55cc6a7@o1169287.ingest.sentry.io/4505443624681472" \
+        -e "sentry_traces_sample_rate=0" \
+        -e "sentry_sample_rate=0" \
+        -e "sentry_auth_token=${{ env.SENTRY_AUTH_TOKEN }}" \
+        -e "jwt_secret=${{ env.jwt_secret }}" \
+        -e "bf_jwt_secret=${{ env.bf_jwt_secret }}" \
+        -e "redis_pwd=${{ env.redis_password }}" \
+        -e "gateway_token_path=/opt/tier1/secrets/Qa_Gateway_Token" \
+        -e "service_token_path=/opt/tier1/secrets/Qa_Service_Tokens" \
+        -e "dotenv_path=/opt/tier1/node_modules/@bhadwa-420/tier1-bhadwa-os/env/qa1.env" \
+        -e "dux_admin_api_token=ducks" \
+        -e "use_f5=false" \
+        -e "node_env=qa1" \
+        -e "config_pwd_id=1870" \
+        -e "config_api_key=c6b2e3d973a854fadb3c9648e3572f6f" \
+        -e "ansible_user=$ANSIBLE_USER" \
+        -e "ansible_ssh_pass=$ANSIBLE_SSH_PASS" \
+        -e "ansible_sudo_pass=$ANSIBLE_SSH_PASS" \
+        -e "dux_api_token=ducks" -vvv
