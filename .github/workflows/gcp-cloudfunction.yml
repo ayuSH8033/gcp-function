@@ -1,0 +1,94 @@
+name: gcp-CloudFunction
+on:
+  workflow_dispatch:
+    inputs:
+      CloudStorage:
+        required: false
+        description: GCS bucket to be used by Cloud Function and Deployment Manager
+        default: function-test-420
+      action:
+        required: true
+        description: 'Action to be performed on cloud function (Valid options: deployment, undeployment)'
+      function:
+        required: true
+        description: 'Name of the cloud Function (Valid options: verify_location, user_details)'
+      CloudStorage:
+        required: false
+        description: GCS bucket to be used by Cloud Function and Deployment Manager
+        default: function-test-420
+env:
+  CLOUDSDK_CORE_PROJECT: infra-testing-2023
+#   # This item has no matching transformer
+#   CLIENT_EMAIL:
+#   # This item has no matching transformer
+#   GCLOUD_CREDS:
+jobs:
+  Deploying_services:
+    if:
+#       # Unsupported condition(s) [expression]
+    name: Deploying-services
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: sh
+      shell: bash
+      run: |-
+        export cloudFunction=${{ env.function }}
+        export gcsBucket=${{ env.CloudStorage }}
+        chmod +x ./execute_function.sh
+        ./execute_function.sh $cloudFunction $gcsBucket
+  cloudFunction_API_integration:
+    if:
+#       # Unsupported condition(s) [expression]
+    name: cloudFunction-API-integration
+    runs-on: ubuntu-latest
+    needs: Deploying_services
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: sh
+      shell: bash
+      run: |-
+        chmod +x ./api_execution.sh $api
+        ./api_execution.sh
+#     # 'script' was not transformed because there is no suitable equivalent in GitHub Actions
+#     - name: script
+#       arguments:
+#       - key: scriptBlock
+#         value:
+#           isLiteral: true
+#           value: |-
+#             def USER_INPUT = input(
+#                                     message: 'User input required - Approve or Abort the api-merge request?',
+#                                     parameters: [
+#                                         [$class: 'ChoiceParameterDefinition',
+#                                 choices: ['Abort','Approve'].join('\n'),
+#                                 name: 'input',
+#                                         ]
+#                                     ])
+#                                 echo "The option selected is: ${{ env.USER_INPUT }}"
+#                                 if( "${{ env.USER_INPUT }}" == "Approve") {
+#                                     sh '''
+#                                     gcloud api-gateway api-configs update generic-updated-v2 --api=hello-world-api --display-name="generic-config"
+#                                     gcloud api-gateway api-configs create latest-config --api=hello-world-api  --openapi-spec=swagger.yaml
+#                                     gcloud api-gateway gateways update test --api=hello-world-api --api-config=latest-config --location=us-central1
+#                                     '''
+#                                 } else
+#                                 {
+#                                     echo "Abort option is selected,Skipping further operation"
+#                                 }
+  Removing_google_deployment_manager:
+    if:
+#       # Unsupported condition(s) [expression]
+    name: Removing-google-deployment-manager
+    runs-on: ubuntu-latest
+    needs: cloudFunction_API_integration
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: sh
+      shell: bash
+      run: |-
+        export FUNCTION_NAME=$(echo "${{ env.function }}" | tr '_' '-')
+        yes | gcloud deployment-manager deployments delete ${{ env.FUNCTION_NAME }}
