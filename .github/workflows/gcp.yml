@@ -1,0 +1,32 @@
+name: GCP
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on:
+      - ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: run command
+      shell: bash
+      run: |-
+        rm -rf function_code
+        echo The name of the cloud-function is verify_location
+        export FUNCTION_NAME=$(echo "verify_location" | tr '_' '-')
+        sed 's/python-simple-http-endpoint/'"$FUNCTION_NAME"'/' serverless.yaml > cloudfunction.yaml
+        mv cloudfunction.yaml serverless.yaml
+        mkdir function_code
+        cp -r verify_location utils function_code
+        cp serverless.yaml swagger.yaml main.py function_code
+        cp verify_location/requirements.txt function_code
+        cd function_code
+        sls plugin install -n serverless-python-requirements
+        sls plugin install -n serverless-google-cloudfunctions
+        sls package --verbose
+        cp .serverless/$FUNCTION_NAME.zip ../
+        ls -la ../
+        cd ..
+        rm -rf function_code
+        ls -la
+        gcloud storage cp *.zip gs://function-test-420
