@@ -1,0 +1,131 @@
+swagger: '2.0'
+info:
+  title: API_ID optional-string
+  description: Sample API on API Gateway with a Google Cloud Functions backend
+  version: 1.0.0
+schemes:
+  - https
+produces:
+  - application/json
+paths:
+  /hello:
+    get:
+      summary: Greet a user
+      operationId: hello
+      x-google-backend:
+        address: https://us-central1-PROJECT_ID.cloudfunctions.net/helloGET
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+  /user/verify_locationy:
+    post:
+      summary: The longitude and latitude will be used to verify the user location
+      operationId: VerifyLocation
+      x-google-backend:
+        address: https://us-central1-PROJECT_ID.cloudfunctions.net/helloPOST
+      consumes:
+        - application/json
+      parameters:
+        - name: location
+          in: query
+          description: 'Longitude and Latitude as comma-separated values (e.g., "longitude,latitude")'
+          required: true
+          type: string
+          format: string
+
+      responses:
+        '200':
+          description: Successfully accepted
+          schema:
+            type: string
+
+
+  /upload_image:
+    post:
+      summary: Here we are uploading the images in base64 to get them processed
+      operationId: UploadImage
+      x-google-backend:
+        address: https://us-central1-PROJECT_ID.cloudfunctions.net/upload_image
+      consumes:
+        - application/json
+      parameters:
+        - name: images
+          in: body
+          description: Base64 encoded images
+          required: true
+          schema:
+            type: object
+            properties:
+              images:
+                type: array
+                items:
+                  type: string
+                  example:
+                   - "image_base64"
+                   - "base_64img2"
+                  format: base64
+      responses:
+        '200':
+          description: Images uploaded successfully
+          schema:
+            type: object
+            properties:
+                error:
+                  type: boolean
+                  example: false
+                processed_image_id:
+                  type: string
+                  example: "image_id"
+
+
+
+  /user:
+    get:
+      summary: get API for fetching user details
+      operationId: getUserProfileById
+      x-google-backend:
+        address: https://us-central1-PROJECT_ID.cloudfunctions.net/userGET
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          type: string
+          description: The unique identifier of the user
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          schema:
+            type: object
+            properties:
+              user_profile:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique identifier for the user
+                  role:
+                    type: string
+                    description: The role of the user
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: Date and time when the user profile was created
+                  updated_at:
+                    type: string
+                    format: date-time
+                    description: Date and time when the user profile was last updated
+                  name:
+                    type: string
+                    description: The name of the user
+                  profile_image:
+                    type: string
+                    description: URL to the user's profile image
+                  email:
+                    type: string
+                    format: email
+                    description: The email address of the user
+              error:
+                type: boolean
+                description: Indicates whether an error occurred (false if successful)

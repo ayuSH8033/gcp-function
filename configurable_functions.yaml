@@ -1,0 +1,25 @@
+imports:
+  - path: configurable_functions.jinja
+resources:
+  - type: gcp-types/cloudfunctions-v2beta:projects.locations.functions
+    name: $stack
+    properties:
+      parent: projects/infra-testing-2023/locations/us-central1
+      function: $gcpfunction
+      buildConfig:
+        source:
+          storageSource:
+            bucket: $gcsBucket
+            object: function-test.zip
+        environmentVariables:
+          TEST: val1
+        entryPoint: handler
+        runtime: python312
+      serviceConfig:
+        availableMemory: 512M
+        timeoutSeconds: 90
+        secretEnvironmentVariables:
+        - key: DB_READER
+          projectId: infra-testing-2023
+          secret: db_reader
+          version: '1'

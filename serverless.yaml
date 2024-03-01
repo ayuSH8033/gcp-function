@@ -1,0 +1,32 @@
+service: python-simple-http-endpoint
+frameworkVersion: "3"
+
+
+package:
+  exclude:
+    - node_modules/**
+    - .gitignore
+    - .git/**
+
+custom:
+  pythonRequirements:
+    pythonBin: python3
+    useStaticCache: true
+    useDownloadCache: true
+    cacheLocation: ~/sls_py_deps
+
+plugins:
+  - serverless-python-requirements
+  - serverless-google-cloudfunctions
+
+provider:
+  name: google
+  runtime: python39
+  project: ir-project-409909
+  credentials: /home/ayush_chotu51/gcp-key.json
+
+functions:
+  currentTime1:
+    handler: lambda_handler
+    events:
+      - http: path
